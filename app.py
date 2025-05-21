@@ -1,56 +1,46 @@
 import streamlit as st
+from datetime import datetime
 
-# ── Configurações da página ─────────────────────────────
-st.set_page_config(page_title="Assistente WhatsApp IA", layout="centered")
+# Configuração do layout da página
+st.set_page_config(page_title="Assistente de Atendimento no WhatsApp", page_icon="🤖", layout="centered")
+
+# Estilo escuro personalizado
+st.markdown("""
+    <style>
+        body {
+            background-color: #0e0e0e;
+            color: #ffffff;
+        }
+        .stTextInput > div > div > input {
+            background-color: #1e1e1e;
+            color: white;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Título e mensagem principal
 st.title("🤖 Assistente de Atendimento no WhatsApp")
+st.markdown("Este é um exemplo funcional do painel do seu bot de WhatsApp com IA.  \n"
+            "**Ele mostra como a IA vai responder seus clientes – sem menus numéricos,**  \n"
+            "**incentivando teste grátis antes de falar de preços.**")
 
-st.markdown(
-    """
-    Este é um **exemplo funcional** do painel do seu bot de WhatsApp com IA.  
-    Ele mostra como a IA vai responder seus clientes – sem menus numéricos, incentivando
-    **teste grátis** antes de falar de preços.
-    ---
-    """,
-    unsafe_allow_html=True,
-)
+# Mensagem inicial
+st.chat_message("assistant").markdown("Oi! Tudo bem? 😊  \nQuer testar grátis nosso sistema de Canais, Filmes e Séries?")
 
-# ── Estado do chat ──────────────────────────────────────
-if "chat" not in st.session_state:
-    st.session_state.chat = [
-        {"role": "assistant", "content": "Oi! Tudo bem? 😊 Quer testar grátis nosso sistema de Canais, Filmes e Séries?"},
-    ]
+# Entrada do usuário (chat)
+if prompt := st.chat_input("Digite aqui..."):
+    st.chat_message("user").markdown(prompt)
 
-# ── Exibir histórico ────────────────────────────────────
-for m in st.session_state.chat:
-    with st.chat_message(m["role"]):
-        st.markdown(m["content"])
-
-# ── Entrada do usuário ──────────────────────────────────
-msg = st.chat_input("Digite aqui…")
-if msg:
-    # mostra a mensagem do usuário
-    st.session_state.chat.append({"role": "user", "content": msg})
-    with st.chat_message("user"):
-        st.markdown(msg)
-
-    # lógica simples de resposta
-    lower = msg.lower()
-    if any(p in lower for p in ["preço", "valor", "quanto"]):
-        answer = (
-            "Planos disponíveis:\n"
-            "• **Mensal:** R$ 24,90\n"
-            "• **3 meses:** R$ 64,90\n"
-            "• **6 meses:** R$ 97,90\n\n"
-            "Mas antes, faça o **teste grátis** 😉\n"
-            "Em qual dispositivo você quer assistir?"
-        )
+    # IA simulada com respostas personalizadas
+    if "preço" in prompt.lower():
+        resposta = "Antes de falar de valores, que tal testar grátis nosso sistema? 😉"
+    elif "teste" in prompt.lower() or "grátis" in prompt.lower():
+        resposta = "Claro! Para liberar o teste, me envie o nome da sua TV ou aparelho (Ex: Smart TV, Android TV, TV Box)."
+    elif "oi" in prompt.lower() or "tudo bem" in prompt.lower():
+        resposta = "Oi! Tudo ótimo por aqui. Como posso te ajudar? 😄"
+    elif "como funciona" in prompt.lower():
+        resposta = "Você recebe acesso exclusivo a canais, filmes, séries e muito mais direto na sua TV ou celular."
     else:
-        answer = (
-            "Legal! Nosso teste grátis funciona em Smart TV, TV Box, celular, "
-            "PC ou notebook. Qual aparelho você prefere?"
-        )
+        resposta = "Legal! Pode me contar mais sobre o que está procurando? 😊"
 
-    # mostra a resposta
-    st.session_state.chat.append({"role": "assistant", "content": answer})
-    with st.chat_message("assistant"):
-        st.markdown(answer)
+    st.chat_message("assistant").markdown(resposta)
